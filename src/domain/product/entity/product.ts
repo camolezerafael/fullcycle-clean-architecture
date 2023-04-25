@@ -1,49 +1,42 @@
-import ProductInterface from "./product.interface";
+import ProductInterface from './product.interface'
+import Entity from '../../@shared/entity/entity.abstract'
+import NotificationError from '../../@shared/notification/notification.error'
+import ProductValidatorFactory from '../factory/product.validator.factory'
 
-export default class Product implements ProductInterface {
-  private _id: string;
-  private _name: string;
-  private _price: number;
+export default class Product extends Entity implements ProductInterface {
+    private _name: string
+    private _price: number
 
-  constructor(id: string, name: string, price: number) {
-    this._id = id;
-    this._name = name;
-    this._price = price;
-    this.validate();
-  }
-
-  get id(): string {
-    return this._id;
-  }
-  
-  get name(): string {
-    return this._name;
-  }
-
-  get price(): number {
-    return this._price;
-  }
-
-  changeName(name: string): void {
-    this._name = name;
-    this.validate();
-  }
-
-  changePrice(price: number): void {
-    this._price = price;
-    this.validate();
-  }
-
-  validate(): boolean {
-    if (this._id.length === 0) {
-      throw new Error("Id is required");
+    constructor(id: string, name: string, price: number) {
+        super()
+        this._id = id
+        this._name = name
+        this._price = price
+        this.validate()
+        if (this.notification.hasErrors()) {
+            throw new NotificationError(this.notification.getErrors())
+        }
     }
-    if (this._name.length === 0) {
-      throw new Error("Name is required");
+
+    get name(): string {
+        return this._name
     }
-    if (this._price < 0) {
-      throw new Error("Price must be greater than zero");
+
+    get price(): number {
+        return this._price
     }
-    return true;
-  }
+
+    changeName(name: string): void {
+        this._name = name
+        this.validate()
+    }
+
+    changePrice(price: number): void {
+        this._price = price
+        this.validate()
+    }
+
+    validate(): void {
+        ProductValidatorFactory.create().validate(this)
+    }
 }
