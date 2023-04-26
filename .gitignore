@@ -3,3 +3,4 @@ node_modules
 .swc
 dist
 /.idea/vcs.xml
+/.idea/cake_config_setting_v0_6.xml
